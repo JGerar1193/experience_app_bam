@@ -197,7 +197,9 @@ class NotificationService {
       final route = data['route'] as String?;
       if (route == 'transactions') {
         navigatorKey.currentState?.push(
-          MaterialPageRoute(builder: (_) => const TransactionsScreen()),
+          MaterialPageRoute(
+            builder: (_) => const Scaffold(body: TransactionsScreen()),
+          ),
         );
       }
     } catch (_) {}
