@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "212470707403",
+    "project_id": "ecomerce-bcd3b",
+    "storage_bucket": "ecomerce-bcd3b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212470707403:android:77669bee71be844309d74e",
+        "android_client_info": {
+          "package_name": "com.example.flutter_ejercicio1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvcEfJ_PVTikOHKqZqndgLVbkhaWzgW0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
