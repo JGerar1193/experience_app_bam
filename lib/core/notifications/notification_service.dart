@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../features/ecommerce/presentation/screens/transactions_screen.dart';
 import '../../firebase_options.dart';
 
 // Canal de Android (obligatorio desde API 26)
@@ -175,6 +176,16 @@ class NotificationService {
     }
   }
 
+  // ── Notificación local de compra ─────────────────────────────────────────
+
+  static Future<void> showPurchaseNotification(double total) async {
+    await _showLocalNotification(
+      title: '¡Compra confirmada!',
+      body: 'Tu pedido por \$${total.toStringAsFixed(2)} fue procesado exitosamente.',
+      payload: jsonEncode({'route': 'transactions'}),
+    );
+  }
+
   // ── Navegación ────────────────────────────────────────────────────────────
 
   static void _handleRoute(String? payload) {
@@ -182,8 +193,12 @@ class NotificationService {
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
       final route = data['route'] as String?;
-      if (route != null) {
-        navigatorKey.currentState?.pushNamed(route);
+      if (route == 'transactions') {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => const TransactionsScreen(),
+          ),
+        );
       }
     } catch (_) {}
   }

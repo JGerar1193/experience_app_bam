@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/card_network.dart';
 import '../../domain/entities/payment_card.dart';
@@ -72,6 +73,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
       // Vacía el carrito una vez confirmada la orden
       ref.read(cartProvider.notifier).clearAll();
+
+      await NotificationService.showPurchaseNotification(total);
 
       if (!mounted) return;
 
