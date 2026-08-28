@@ -16,8 +16,8 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 
     defaultConfig {
@@ -48,7 +48,4 @@ flutter {
     source = "../.."
 }
 
-// Prevent AGP from requiring NDK (no C++ code in this project)
-afterEvaluate {
-    android.ndkVersion = ""
-}
+
