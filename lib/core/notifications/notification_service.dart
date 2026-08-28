@@ -192,6 +192,8 @@ class NotificationService {
 
   static void _handleRoute(String? payload) {
     if (payload == null) return;
+    // No navegar si no hay sesión activa
+    if (FirebaseAuth.instance.currentUser == null) return;
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
       final route = data['route'] as String?;
