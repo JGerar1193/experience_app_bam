@@ -48,7 +48,8 @@ class NotificationService {
   static Future<void> _createChannel() async {
     await _localPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
   }
 
@@ -178,10 +179,11 @@ class NotificationService {
 
   // ── Notificación local de compra ─────────────────────────────────────────
 
-  static Future<void> showPurchaseNotification(double total) async {
-    await _showLocalNotification(
+  static void showPurchaseNotification(double total) {
+    _showLocalNotification(
       title: '¡Compra confirmada!',
-      body: 'Tu pedido por \$${total.toStringAsFixed(2)} fue procesado exitosamente.',
+      body:
+          'Tu pedido por \$${total.toStringAsFixed(2)} fue procesado exitosamente.',
       payload: jsonEncode({'route': 'transactions'}),
     );
   }
@@ -195,9 +197,7 @@ class NotificationService {
       final route = data['route'] as String?;
       if (route == 'transactions') {
         navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (_) => const TransactionsScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const TransactionsScreen()),
         );
       }
     } catch (_) {}

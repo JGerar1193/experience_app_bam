@@ -43,8 +43,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
       // Para credit_card: llama al servicio real de pagos
       if (_selectedMethod == 'credit_card') {
-        final paymentResult =
-            await ref.read(processPaymentUseCaseProvider)(
+        final paymentResult = await ref.read(processPaymentUseCaseProvider)(
           cardNumber: _selectedCard,
           amount: total,
         );
@@ -63,18 +62,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         }
       }
 
-      final order = await ref.read(orderProvider.notifier).placeOrder(
+      final order = await ref
+          .read(orderProvider.notifier)
+          .placeOrder(
             items: cartItems,
             total: total,
             paymentMethod: _selectedMethod,
-            selectedCard:
-                _selectedMethod == 'credit_card' ? _selectedCard : null,
+            selectedCard: _selectedMethod == 'credit_card'
+                ? _selectedCard
+                : null,
           );
 
       // Vacía el carrito una vez confirmada la orden
       ref.read(cartProvider.notifier).clearAll();
 
-      await NotificationService.showPurchaseNotification(total);
+      NotificationService.showPurchaseNotification(total);
 
       if (!mounted) return;
 
@@ -112,10 +114,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           onPressed: () => Navigator.pop(context),
           child: const Text(
             'Cancel',
-            style: TextStyle(
-              color: AppColors.primary,
-              fontSize: 15,
-            ),
+            style: TextStyle(color: AppColors.primary, fontSize: 15),
           ),
         ),
         title: const Text(
@@ -179,8 +178,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                 setState(() => _selectedCard = card),
                             onSameAddressChanged: (value) =>
                                 setState(() => _sameAddress = value),
-                            onAddCard: () =>
-                                showAddCardBottomSheet(context),
+                            onAddCard: () => showAddCardBottomSheet(context),
                           )
                         : null,
                   ),
@@ -191,8 +189,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   _PaymentOptionCard(
                     label: 'Apple Pay',
                     isSelected: _selectedMethod == 'apple_pay',
-                    onTap: () =>
-                        setState(() => _selectedMethod = 'apple_pay'),
+                    onTap: () => setState(() => _selectedMethod = 'apple_pay'),
                     child: null,
                   ),
 
@@ -213,8 +210,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 onPressed: _isProcessing ? null : _processPayment,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  disabledBackgroundColor:
-                      AppColors.primary.withAlpha(140),
+                  disabledBackgroundColor: AppColors.primary.withAlpha(140),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -278,8 +274,7 @@ class _CheckoutStepper extends StatelessWidget {
                   ),
                   child: Center(
                     child: isDone
-                        ? const Icon(Icons.check,
-                            color: Colors.white, size: 16)
+                        ? const Icon(Icons.check, color: Colors.white, size: 16)
                         : Text(
                             '${index + 1}',
                             style: TextStyle(
@@ -297,12 +292,8 @@ class _CheckoutStepper extends StatelessWidget {
                   steps[index],
                   style: TextStyle(
                     fontSize: 11,
-                    fontWeight: isActive
-                        ? FontWeight.w700
-                        : FontWeight.normal,
-                    color: isActive
-                        ? AppColors.textDark
-                        : AppColors.textGray,
+                    fontWeight: isActive ? FontWeight.w700 : FontWeight.normal,
+                    color: isActive ? AppColors.textDark : AppColors.textGray,
                   ),
                 ),
               ],
@@ -487,19 +478,14 @@ class _CreditCardSection extends StatelessWidget {
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: sameAddress
-                        ? AppColors.primary
-                        : Colors.white,
+                    color: sameAddress ? AppColors.primary : Colors.white,
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      color: sameAddress
-                          ? AppColors.primary
-                          : AppColors.border,
+                      color: sameAddress ? AppColors.primary : AppColors.border,
                     ),
                   ),
                   child: sameAddress
-                      ? const Icon(Icons.check,
-                          color: Colors.white, size: 14)
+                      ? const Icon(Icons.check, color: Colors.white, size: 14)
                       : null,
                 ),
                 const SizedBox(width: 10),
@@ -544,9 +530,7 @@ class _CardTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.lightBlue
-              : const Color(0xFFF4F6FA),
+          color: isSelected ? AppColors.lightBlue : const Color(0xFFF4F6FA),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
