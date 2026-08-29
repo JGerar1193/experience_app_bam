@@ -41,3 +41,11 @@ final homeProductsProvider = StreamProvider<HomeProducts>((ref) {
 final homeCarouselIndexProvider = StateProvider<int>((ref) => 0);
 
 final selectedBottomNavIndexProvider = StateProvider<int>((ref) => 0);
+
+final bannersProvider = FutureProvider<List<String>>((ref) async {
+  final storage = ref.read(storageProvider);
+  const banners = ['banner1.jpg', 'banner2.jpg', 'banner3.jpg'];
+  return Future.wait(
+    banners.map((name) => storage.ref('products/$name').getDownloadURL()),
+  );
+});

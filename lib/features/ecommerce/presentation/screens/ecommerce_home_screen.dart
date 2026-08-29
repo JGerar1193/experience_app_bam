@@ -19,6 +19,7 @@ class EcommerceHomeScreen extends ConsumerWidget {
     final homeProductsAsync = ref.watch(homeProductsProvider);
     final carouselIndex = ref.watch(homeCarouselIndexProvider);
     final bottomIndex = ref.watch(selectedBottomNavIndexProvider);
+    final bannersAsync = ref.watch(bannersProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -37,44 +38,56 @@ class EcommerceHomeScreen extends ConsumerWidget {
               // Banner principal
               SizedBox(
                 height: 150,
-                child: PageView.builder(
-                  itemCount: 5,
-                  onPageChanged: (index) {
-                    ref.read(homeCarouselIndexProvider.notifier).state = index;
-                  },
-                  itemBuilder: (context, index) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: ProductImagePlaceholder(
-                        height: 150,
-                        width: double.infinity,
-                        borderRadius: 0,
-                      ),
-                    );
-                  },
+                child: bannersAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (_, __) => const SizedBox.shrink(),
+                  data: (urls) => PageView.builder(
+                    itemCount: urls.length,
+                    onPageChanged: (index) {
+                      ref.read(homeCarouselIndexProvider.notifier).state = index;
+                    },
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            urls[index],
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            loadingBuilder: (_, child, progress) => progress == null
+                                ? child
+                                : const Center(child: CircularProgressIndicator()),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
 
               const SizedBox(height: 8),
 
               // Puntitos del carrusel
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  final isActive = carouselIndex == index;
-
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    height: 6,
-                    width: isActive ? 8 : 6,
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? const Color(0xFF0A7CFF)
-                          : const Color(0xFFD6E5F7),
-                      shape: BoxShape.circle,
-                    ),
-                  );
-                }),
+              bannersAsync.maybeWhen(
+                data: (urls) => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(urls.length, (index) {
+                    final isActive = carouselIndex == index;
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      height: 6,
+                      width: isActive ? 8 : 6,
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? const Color(0xFF0A7CFF)
+                            : const Color(0xFFD6E5F7),
+                        shape: BoxShape.circle,
+                      ),
+                    );
+                  }),
+                ),
+                orElse: () => const SizedBox.shrink(),
               ),
 
               const SizedBox(height: 24),
