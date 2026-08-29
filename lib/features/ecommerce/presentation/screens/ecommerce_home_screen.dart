@@ -27,102 +27,108 @@ class EcommerceHomeScreen extends ConsumerWidget {
       body: bottomIndex == 2
           ? const TransactionsScreen()
           : bottomIndex == 3
-              ? const _ProfileSection()
-              : SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _HomeHeader(),
-              const SizedBox(height: 12),
-
-              // Banner principal
-              SizedBox(
-                height: 150,
-                child: bannersAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => const SizedBox.shrink(),
-                  data: (urls) => PageView.builder(
-                    itemCount: urls.length,
-                    onPageChanged: (index) {
-                      ref.read(homeCarouselIndexProvider.notifier).state = index;
-                    },
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            urls[index],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            loadingBuilder: (_, child, progress) => progress == null
-                                ? child
-                                : const Center(child: CircularProgressIndicator()),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Puntitos del carrusel
-              bannersAsync.maybeWhen(
-                data: (urls) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(urls.length, (index) {
-                    final isActive = carouselIndex == index;
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      height: 6,
-                      width: isActive ? 8 : 6,
-                      decoration: BoxDecoration(
-                        color: isActive
-                            ? const Color(0xFF0A7CFF)
-                            : const Color(0xFFD6E5F7),
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  }),
-                ),
-                orElse: () => const SizedBox.shrink(),
-              ),
-
-              const SizedBox(height: 24),
-
-              homeProductsAsync.when(
-                loading: () => const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (e, _) => Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    'Error al cargar productos: $e',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-                data: (homeProducts) => Column(
+          ? const _ProfileSection()
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    ProductSection(
-                      title: 'Perfect for you',
-                      products: homeProducts.recommended,
+                    _HomeHeader(),
+                    const SizedBox(height: 12),
+
+                    // Banner principal
+                    SizedBox(
+                      height: 150,
+                      child: bannersAsync.when(
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data: (urls) => PageView.builder(
+                          itemCount: urls.length,
+                          onPageChanged: (index) {
+                            ref.read(homeCarouselIndexProvider.notifier).state =
+                                index;
+                          },
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  urls[index],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  loadingBuilder: (_, child, progress) =>
+                                      progress == null
+                                      ? child
+                                      : const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 18),
-                    ProductSection(
-                      title: 'For this summer',
-                      products: homeProducts.summer,
+
+                    const SizedBox(height: 8),
+
+                    // Puntitos del carrusel
+                    bannersAsync.maybeWhen(
+                      data: (urls) => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(urls.length, (index) {
+                          final isActive = carouselIndex == index;
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            height: 6,
+                            width: isActive ? 8 : 6,
+                            decoration: BoxDecoration(
+                              color: isActive
+                                  ? const Color(0xFF0A7CFF)
+                                  : const Color(0xFFD6E5F7),
+                              shape: BoxShape.circle,
+                            ),
+                          );
+                        }),
+                      ),
+                      orElse: () => const SizedBox.shrink(),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    homeProductsAsync.when(
+                      loading: () => const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (e, _) => Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          'Error al cargar productos: $e',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      data: (homeProducts) => Column(
+                        children: [
+                          ProductSection(
+                            title: 'Perfect for you',
+                            products: homeProducts.recommended,
+                          ),
+                          const SizedBox(height: 18),
+                          ProductSection(
+                            title: 'For this summer',
+                            products: homeProducts.summer,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-
-            ],
-          ),
-        ),
-      ),
+            ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: bottomIndex,
@@ -133,10 +139,7 @@ class EcommerceHomeScreen extends ConsumerWidget {
           ref.read(selectedBottomNavIndexProvider.notifier).state = index;
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: 'Explore',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_view_rounded),
             label: 'Categories',
@@ -145,10 +148,7 @@ class EcommerceHomeScreen extends ConsumerWidget {
             icon: Icon(Icons.history),
             label: 'Transactions',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
@@ -255,10 +255,7 @@ class _ProfileSection extends ConsumerWidget {
                     ),
                     Text(
                       user?.email ?? '',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -275,7 +272,8 @@ class _ProfileSection extends ConsumerWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => const ProductManagementScreen()),
+                    builder: (_) => const ProductManagementScreen(),
+                  ),
                 ),
               ),
               const Divider(height: 1),
@@ -287,6 +285,7 @@ class _ProfileSection extends ConsumerWidget {
               color: Colors.red,
               onTap: () async {
                 await ref.read(authProvider.notifier).logout();
+                ref.read(selectedBottomNavIndexProvider.notifier).state = 0;
                 if (context.mounted) {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -322,9 +321,10 @@ class _ProfileOption extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: effectiveColor),
-      title: Text(label,
-          style: TextStyle(
-              color: effectiveColor, fontWeight: FontWeight.w500)),
+      title: Text(
+        label,
+        style: TextStyle(color: effectiveColor, fontWeight: FontWeight.w500),
+      ),
       trailing: color == null
           ? const Icon(Icons.chevron_right, color: Colors.grey)
           : null,
