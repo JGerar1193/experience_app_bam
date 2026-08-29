@@ -19,6 +19,13 @@ final orderRepositoryProvider = Provider<OrderRepository>((ref) {
   return OrderRepositoryImpl(ref.read(orderFirestoreDatasourceProvider));
 });
 
+final orderByIdProvider =
+    FutureProvider.autoDispose.family<Order?, String>((ref, orderId) async {
+  final datasource = ref.read(orderFirestoreDatasourceProvider);
+  final model = await datasource.fetchOrderById(orderId);
+  return model?.toEntity();
+});
+
 final placeOrderUseCaseProvider = Provider<PlaceOrderUseCase>((ref) {
   return PlaceOrderUseCase(ref.read(orderRepositoryProvider));
 });

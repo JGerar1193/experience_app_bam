@@ -21,6 +21,14 @@ class OrderFirestoreDatasource {
     await docRef.set(order.toFirestore());
   }
 
+  /// Obtiene una sola orden por su ID de documento.
+  Future<OrderModel?> fetchOrderById(String orderId) async {
+    final doc =
+        await _firestore.collection(_collection).doc(orderId).get();
+    if (!doc.exists || doc.data() == null) return null;
+    return OrderModel.fromFirestore(doc.data()!, doc.id);
+  }
+
   /// Stream en tiempo real de órdenes de un usuario, ordenadas de más reciente a más antigua.
   Stream<List<OrderModel>> watchUserOrders(String userId) {
     return _firestore

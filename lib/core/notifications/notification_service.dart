@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../features/ecommerce/presentation/screens/order_detail_screen.dart';
 import '../../features/ecommerce/presentation/screens/transactions_screen.dart';
 import '../../firebase_options.dart';
 
@@ -179,12 +180,12 @@ class NotificationService {
 
   // ── Notificación local de compra ─────────────────────────────────────────
 
-  static void showPurchaseNotification(double total) {
+  static void showPurchaseNotification(double total, String orderId) {
     _showLocalNotification(
       title: '¡Compra confirmada!',
       body:
           'Tu pedido por \$${total.toStringAsFixed(2)} fue procesado exitosamente.',
-      payload: jsonEncode({'route': 'transactions'}),
+      payload: jsonEncode({'route': 'order_detail', 'orderId': orderId}),
     );
   }
 
@@ -197,7 +198,15 @@ class NotificationService {
     try {
       final data = jsonDecode(payload) as Map<String, dynamic>;
       final route = data['route'] as String?;
-      if (route == 'transactions') {
+      if (route == 'order_detail') {
+        final orderId = data['orderId'] as String?;
+        if (orderId == null) return;
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => OrderDetailScreen(orderId: orderId),
+          ),
+        );
+      } else if (route == 'transactions') {
         navigatorKey.currentState?.push(
           MaterialPageRoute(
             builder: (_) => const Scaffold(body: TransactionsScreen()),

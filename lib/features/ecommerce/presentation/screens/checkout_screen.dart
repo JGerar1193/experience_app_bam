@@ -76,7 +76,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       // Vacía el carrito una vez confirmada la orden
       ref.read(cartProvider.notifier).clearAll();
 
-      NotificationService.showPurchaseNotification(total);
+      NotificationService.showPurchaseNotification(total, order.id);
 
       if (!mounted) return;
 
