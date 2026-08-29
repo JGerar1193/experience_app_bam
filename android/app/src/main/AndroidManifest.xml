@@ -6,7 +6,7 @@
     <!-- Push notifications (Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
-        android:label="flutter_ejercicio1"
+        android:label="experienceApp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
