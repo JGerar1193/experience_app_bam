@@ -10,8 +10,9 @@ import '../../domain/repositories/order_repository.dart';
 import '../../domain/usecases/place_order_usecase.dart';
 import '../providers/ecommerce_provider.dart';
 
-final orderFirestoreDatasourceProvider =
-    Provider<OrderFirestoreDatasource>((ref) {
+final orderFirestoreDatasourceProvider = Provider<OrderFirestoreDatasource>((
+  ref,
+) {
   return OrderFirestoreDatasource(ref.read(firestoreProvider));
 });
 
@@ -19,8 +20,10 @@ final orderRepositoryProvider = Provider<OrderRepository>((ref) {
   return OrderRepositoryImpl(ref.read(orderFirestoreDatasourceProvider));
 });
 
-final orderByIdProvider =
-    FutureProvider.autoDispose.family<Order?, String>((ref, orderId) async {
+final orderByIdProvider = FutureProvider.autoDispose.family<Order?, String>((
+  ref,
+  orderId,
+) async {
   final datasource = ref.read(orderFirestoreDatasourceProvider);
   final model = await datasource.fetchOrderById(orderId);
   return model?.toEntity();
@@ -35,8 +38,8 @@ final placeOrderUseCaseProvider = Provider<PlaceOrderUseCase>((ref) {
 // con el UID correcto cuando un nuevo usuario inicia sesión.
 final orderProvider =
     StreamNotifierProvider.autoDispose<OrderNotifier, List<Order>>(
-  OrderNotifier.new,
-);
+      OrderNotifier.new,
+    );
 
 class OrderNotifier extends AutoDisposeStreamNotifier<List<Order>> {
   @override
@@ -65,4 +68,3 @@ class OrderNotifier extends AutoDisposeStreamNotifier<List<Order>> {
     );
   }
 }
-

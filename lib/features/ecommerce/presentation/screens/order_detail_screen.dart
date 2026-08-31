@@ -82,23 +82,29 @@ class _OrderDetail extends StatelessWidget {
                     Text(
                       shortId,
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Spacer(),
                     Text(
                       '\$${order.total.toStringAsFixed(2)}',
                       style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A7CFF)),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0A7CFF),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined,
-                        size: 14, color: Colors.grey[500]),
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 14,
+                      color: Colors.grey[500],
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       dateFormat.format(order.createdAt),
@@ -109,8 +115,11 @@ class _OrderDetail extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.credit_card_outlined,
-                        size: 14, color: Colors.grey[500]),
+                    Icon(
+                      Icons.credit_card_outlined,
+                      size: 14,
+                      color: Colors.grey[500],
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       order.paymentMethod,
@@ -119,8 +128,7 @@ class _OrderDetail extends StatelessWidget {
                     if (order.selectedCard != null) ...[
                       Text(
                         '  ····${order.selectedCard!.replaceAll(' ', '').substring(order.selectedCard!.replaceAll(' ', '').length - 4)}',
-                        style:
-                            TextStyle(fontSize: 13, color: Colors.grey[500]),
+                        style: TextStyle(fontSize: 13, color: Colors.grey[500]),
                       ),
                     ],
                   ],
@@ -177,15 +185,17 @@ class _OrderDetail extends StatelessWidget {
                                   Text(
                                     item.product.name,
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     '${item.selectedSize} · ${item.selectedColor}',
                                     style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[500]),
+                                      fontSize: 12,
+                                      color: Colors.grey[500],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -196,14 +206,16 @@ class _OrderDetail extends StatelessWidget {
                                 Text(
                                   'x${item.quantity}',
                                   style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey[600]),
+                                    fontSize: 13,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                                 Text(
                                   '\$${item.totalPrice.toStringAsFixed(2)}',
                                   style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ],
                             ),
@@ -236,16 +248,18 @@ class _OrderDetail extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Text('Total',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                const Text(
+                  'Total',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
                 const Spacer(),
                 Text(
                   '\$${order.total.toStringAsFixed(2)}',
                   style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0A7CFF)),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0A7CFF),
+                  ),
                 ),
               ],
             ),
