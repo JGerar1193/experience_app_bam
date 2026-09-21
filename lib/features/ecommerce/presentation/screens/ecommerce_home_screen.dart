@@ -41,7 +41,7 @@ class EcommerceHomeScreen extends ConsumerWidget {
                       child: bannersAsync.when(
                         loading: () =>
                             const Center(child: CircularProgressIndicator()),
-                        error: (_, __) => const SizedBox.shrink(),
+                        error: (_, _) => const SizedBox.shrink(),
                         data: (urls) => PageView.builder(
                           itemCount: urls.length,
                           onPageChanged: (index) {
