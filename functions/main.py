@@ -2,7 +2,7 @@
 # To get started, simply uncomment the below code or create your own.
 # Deploy with `firebase deploy`
 
-from firebase_functions import https_fn
+from firebase_functions import firestore_fn, https_fn, identity_fn
 from firebase_functions.options import set_global_options
 from firebase_admin import initialize_app
 
@@ -13,9 +13,32 @@ from firebase_admin import initialize_app
 # parameter in the decorator, e.g. @https_fn.on_request(max_instances=5).
 set_global_options(max_instances=10)
 
-# initialize_app()
-#
-#
-# @https_fn.on_request()
-# def on_request_example(req: https_fn.Request) -> https_fn.Response:
-#     return https_fn.Response("Hello world!")
+initialize_app()
+
+
+@https_fn.on_request()
+def on_request_example(req: https_fn.Request) -> https_fn.Response:
+	print("--------------------------------")
+	print("SE ESTA EJECUTANDO LA FUNCION DE PRUEBA")
+	print("--------------------------------")
+	return https_fn.Response("Hello world!")
+
+
+@firestore_fn.on_document_created(document="users/{userId}")
+def on_user_created(event: firestore_fn.Event[firestore_fn.DocumentSnapshot]) -> None:
+	print("--------------------------------")
+	print("SE ESTA EJECUTANDO EL TRIGGER DE PRUEBA")
+	print("--------------------------------")
+
+	user_id = event.params["userId"]
+	user_data = event.data.to_dict() if event.data else {}
+	print(f"User created: {user_id}, data: {user_data}")
+
+
+@identity_fn.before_user_created()
+def create_user(event: identity_fn.AuthBlockingEvent) -> None:
+	print("--------------------------------")
+	print("SE ESTA EJECUTANDO EL TRIGGER DE PRUEBA DE IDENTITY")
+	print("--------------------------------")
+
+	print(f"User created: {event.data.uid}")
