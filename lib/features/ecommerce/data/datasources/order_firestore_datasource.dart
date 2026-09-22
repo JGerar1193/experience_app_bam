@@ -23,8 +23,7 @@ class OrderFirestoreDatasource {
 
   /// Obtiene una sola orden por su ID de documento.
   Future<OrderModel?> fetchOrderById(String orderId) async {
-    final doc =
-        await _firestore.collection(_collection).doc(orderId).get();
+    final doc = await _firestore.collection(_collection).doc(orderId).get();
     if (!doc.exists || doc.data() == null) return null;
     return OrderModel.fromFirestore(doc.data()!, doc.id);
   }
