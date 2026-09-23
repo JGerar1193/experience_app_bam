@@ -1,1 +1,81 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"ecomerce-bcd3b","appId":"1:212470707403:android:77669bee71be844309d74e","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"ecomerce-bcd3b","configurations":{"android":"1:212470707403:android:77669bee71be844309d74e","ios":"1:212470707403:ios:54ddd7415562292909d74e","macos":"1:212470707403:ios:54ddd7415562292909d74e","web":"1:212470707403:web:1d54a69616164bdf09d74e","windows":"1:212470707403:web:618309cf2392d06e09d74e"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "ecomerce-bcd3b",
+          "appId": "1:212470707403:android:77669bee71be844309d74e",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "ecomerce-bcd3b",
+          "configurations": {
+            "android": "1:212470707403:android:77669bee71be844309d74e",
+            "ios": "1:212470707403:ios:54ddd7415562292909d74e",
+            "macos": "1:212470707403:ios:54ddd7415562292909d74e",
+            "web": "1:212470707403:web:1d54a69616164bdf09d74e",
+            "windows": "1:212470707403:web:618309cf2392d06e09d74e"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "runtime": "python314"
+    }
+  ],
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Solo usuarios autenticados pueden leer imágenes de productos
+    match /products/{imageId} {
+      allow read: if true;                          // cualquiera puede ver
+      allow write: if request.auth != null;         // solo autenticados suben
+    }
+  }
+}
