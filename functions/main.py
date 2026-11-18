@@ -13,6 +13,7 @@ set_global_options(max_instances=10)
 initialize_app()
 
 PAYMENT_API_URL = "https://processpayment-sfdkfoab2q-uc.a.run.app"
+print("DEBUG main.py cargado (version diagnostico)")
 MAX_QUANTITY = 99
 
 
