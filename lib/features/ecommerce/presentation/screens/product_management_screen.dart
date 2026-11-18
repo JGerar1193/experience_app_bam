@@ -200,13 +200,6 @@ class _ProductTile extends StatelessWidget {
     );
   }
 
-  Widget _imageFallback() => Container(
-        width: 56,
-        height: 56,
-        color: Colors.grey[200],
-        child: const Icon(Icons.image_not_supported, color: Colors.grey),
-      );
-
   Widget _badge(String label, Color color) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(

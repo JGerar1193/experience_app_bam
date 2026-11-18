@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
 import '../../../../features/auth/presentation/screens/login_screen.dart';
-import '../providers/ecommerce_provider.dart';
 import '../providers/cart_provider.dart';
-import '../widgets/product_image_placeholder.dart';
+import '../providers/ecommerce_provider.dart';
 import '../widgets/product_section.dart';
 import 'bag_screen.dart';
 import 'product_management_screen.dart';

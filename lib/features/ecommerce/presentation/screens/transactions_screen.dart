@@ -212,12 +212,4 @@ class _OrderCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _imageFallback() => Container(
-        width: 44,
-        height: 44,
-        color: Colors.grey[200],
-        child: const Icon(Icons.image_not_supported,
-            color: Colors.grey, size: 20),
-      );
 }

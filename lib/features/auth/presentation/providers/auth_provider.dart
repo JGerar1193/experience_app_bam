@@ -10,7 +10,6 @@ import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/send_password_reset_usecase.dart';
-import 'package:experience_app/features/ecommerce/presentation/providers/cart_provider.dart';
 
 // ── Providers de infraestructura ──────────────────────────────────────────────
 
