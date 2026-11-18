@@ -13,8 +13,19 @@ set_global_options(max_instances=10)
 initialize_app()
 
 PAYMENT_API_URL = "https://processpayment-sfdkfoab2q-uc.a.run.app"
-print("DEBUG main.py cargado (version diagnostico)")
 MAX_QUANTITY = 99
+
+
+def _to_int(raw) -> int | None:
+    # Las cantidades pueden llegar como número, texto o envueltas en un Int64Value ({"value": "2"}).
+    value = raw.get("value") if isinstance(raw, dict) else raw
+    if isinstance(value, bool):
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return int(number) if number.is_integer() else None
 
 
 @https_fn.on_request()
@@ -63,7 +74,6 @@ def create_order(req: https_fn.CallableRequest) -> dict:
     data = req.data or {}
     raw_items = data.get("items") or []
     card_number = str(data.get("cardNumber") or "").strip()
-    print(f"DEBUG create_order items={raw_items!r}")
 
     if not raw_items or not isinstance(raw_items, list):
         raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT, "El carrito está vacío.")
@@ -78,11 +88,11 @@ def create_order(req: https_fn.CallableRequest) -> dict:
     # El precio se toma siempre de Firestore; el cliente nunca decide el total.
     for raw in raw_items:
         product_id = str(raw.get("productId") or "")
-        quantity = raw.get("quantity")
+        quantity = _to_int(raw.get("quantity"))
         size = str(raw.get("selectedSize") or "")
         color = str(raw.get("selectedColor") or "")
 
-        if not isinstance(quantity, int) or not 1 <= quantity <= MAX_QUANTITY:
+        if quantity is None or not 1 <= quantity <= MAX_QUANTITY:
             raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT, "Cantidad inválida.")
 
         snapshot = db.collection("Products").document(product_id).get()
