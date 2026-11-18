@@ -62,6 +62,7 @@ def create_order(req: https_fn.CallableRequest) -> dict:
     data = req.data or {}
     raw_items = data.get("items") or []
     card_number = str(data.get("cardNumber") or "").strip()
+    print(f"DEBUG create_order items={raw_items!r}")
 
     if not raw_items or not isinstance(raw_items, list):
         raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT, "El carrito está vacío.")
