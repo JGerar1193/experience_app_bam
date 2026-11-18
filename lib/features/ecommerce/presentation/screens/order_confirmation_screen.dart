@@ -203,7 +203,6 @@ class OrderConfirmationScreen extends StatelessWidget {
   }
 
   String _paymentLabel() {
-    if (order.paymentMethod == 'apple_pay') return 'Apple Pay';
     if (order.selectedCard != null) {
       final network = detectCardNetwork(order.selectedCard!);
       final digits = order.selectedCard!.replaceAll(RegExp(r'\D'), '');
