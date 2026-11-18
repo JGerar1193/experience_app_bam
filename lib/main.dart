@@ -29,8 +29,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
-  final isLoggedIn = fb.FirebaseAuth.instance.currentUser != null ||
-      prefs.getString('auth_current_user') != null;
+  final isLoggedIn = fb.FirebaseAuth.instance.currentUser != null;
 
   runApp(
     ProviderScope(

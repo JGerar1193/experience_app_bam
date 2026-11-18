@@ -39,13 +39,15 @@ class CardNotifier extends StateNotifier<List<PaymentCard>> {
       : super([...mockCards, ..._storage.loadUserCards()]);
 
   Future<void> addCard(PaymentCard card) async {
+    final safeCard = maskPaymentCard(card);
+
     // Determina las tarjetas que el usuario ha agregado (las que no son del mock)
     final userCards = state
         .where((c) => !_isMockCard(c))
         .toList()
-      ..add(card);
+      ..add(safeCard);
 
-    state = [...state, card];
+    state = [...state, safeCard];
 
     // Persiste solo las tarjetas del usuario
     await _storage.saveUserCards(userCards);
@@ -71,6 +73,3 @@ final cardListProvider =
   final storage = ref.read(userCardStorageProvider);
   return CardNotifier(mockCards, storage);
 });
-
-// Alias retrocompatible para providers que aún usen testCardsProvider
-final testCardsProvider = cardListProvider;

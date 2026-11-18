@@ -9,15 +9,8 @@ class PlaceOrderUseCase {
 
   Future<Order> call({
     required List<CartItem> items,
-    required double total,
-    required String paymentMethod,
-    String? selectedCard,
+    required String cardNumber,
   }) {
-    return repository.placeOrder(
-      items: items,
-      total: total,
-      paymentMethod: paymentMethod,
-      selectedCard: selectedCard,
-    );
+    return repository.placeOrder(items: items, cardNumber: cardNumber);
   }
 }

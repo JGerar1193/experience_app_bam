@@ -3,12 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 
 import '../../domain/entities/user.dart';
 
-/// Thrown when Firebase cannot reach the network, allowing the repository
-/// to fall back to local authentication.
-class FirebaseNetworkException implements Exception {
-  const FirebaseNetworkException();
-}
-
 class AuthFirebaseDatasource {
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
@@ -45,9 +39,6 @@ class AuthFirebaseDatasource {
         role: role,
       );
     } on fb.FirebaseAuthException catch (e) {
-      if (e.code == 'network-request-failed') {
-        throw const FirebaseNetworkException();
-      }
       throw Exception(_mapError(e.code));
     }
   }
@@ -72,9 +63,14 @@ class AuthFirebaseDatasource {
       });
       return User(name: name, email: credential.user!.email!, role: 'user');
     } on fb.FirebaseAuthException catch (e) {
-      if (e.code == 'network-request-failed') {
-        throw const FirebaseNetworkException();
-      }
+      throw Exception(_mapError(e.code));
+    }
+  }
+
+  Future<void> sendPasswordReset({required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on fb.FirebaseAuthException catch (e) {
       throw Exception(_mapError(e.code));
     }
   }

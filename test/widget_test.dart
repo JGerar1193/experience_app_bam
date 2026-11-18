@@ -1,30 +1,29 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_ejercicio1/main.dart';
+import 'package:experience_app/features/ecommerce/data/datasources/user_card_local_storage.dart';
+import 'package:experience_app/features/ecommerce/domain/entities/card_network.dart';
+import 'package:experience_app/features/ecommerce/domain/entities/payment_card.dart';
+
+PaymentCard _card(String number) => PaymentCard(
+      number: number,
+      holderName: 'Test',
+      network: CardNetwork.visa,
+      behavior: CardBehavior.approved,
+    );
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('maskPaymentCard', () {
+    test('keeps BIN and last4 and hides the middle digits', () {
+      final masked = maskPaymentCard(_card('4242 4242 4242 4242'));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(masked.number, '424242******4242');
+      expect(masked.last4, '4242');
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('returns the card unchanged when it has fewer than 12 digits', () {
+      final card = _card('4242 42');
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(identical(maskPaymentCard(card), card), isTrue);
+    });
   });
 }

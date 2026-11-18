@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/card_network.dart';
 import '../../domain/entities/payment_card.dart';
 import '../providers/card_provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
-import '../providers/payment_provider.dart';
 import '../widgets/add_card_bottom_sheet.dart';
 import 'order_confirmation_screen.dart';
 
@@ -20,10 +18,7 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
-  // Método de pago seleccionado: 'credit_card' o 'apple_pay'
-  String _selectedMethod = 'credit_card';
-
-  // Número de la tarjeta seleccionada dentro de Credit Card
+  // Número de la tarjeta de prueba seleccionada
   String _selectedCard = '5555 5555 5555 4444';
 
   // Checkbox de billing address
@@ -39,48 +34,15 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     setState(() => _isProcessing = true);
 
     try {
-      final total = ref.read(cartProvider.notifier).total;
-
-      // Para credit_card: llama al servicio real de pagos
-      if (_selectedMethod == 'credit_card') {
-        final paymentResult = await ref.read(processPaymentUseCaseProvider)(
-          cardNumber: _selectedCard,
-          amount: total,
-        );
-
-        if (!paymentResult.isApproved) {
-          if (mounted) {
-            setState(() => _isProcessing = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(paymentResult.message),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
-          }
-          return;
-        }
-      }
-
+      // El servidor valida precios, cobra y crea la orden; la notificación la envía onOrderCreated.
       final order = await ref
           .read(orderProvider.notifier)
-          .placeOrder(
-            items: cartItems,
-            total: total,
-            paymentMethod: _selectedMethod,
-            selectedCard: _selectedMethod == 'credit_card'
-                ? _selectedCard
-                : null,
-          );
+          .placeOrder(items: cartItems, cardNumber: _selectedCard);
 
-      // Vacía el carrito una vez confirmada la orden
       ref.read(cartProvider.notifier).clearAll();
-
-      NotificationService.showPurchaseNotification(total, order.id);
 
       if (!mounted) return;
 
-      // Navega a la pantalla de confirmación reemplazando el checkout
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => OrderConfirmationScreen(order: order),
@@ -92,9 +54,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            e.toString().contains('PaymentApiException')
-                ? e.toString().replaceFirst('PaymentApiException: ', '')
-                : 'Payment failed. Please try again.',
+            e.toString().replaceFirst('Exception: ', ''),
           ),
           backgroundColor: Colors.redAccent,
         ),
@@ -104,7 +64,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final testCards = ref.watch(testCardsProvider);
+    // Solo tarjetas de prueba: son las únicas que el servidor acepta para cobrar.
+    final testCards = ref.watch(getTestCardsUseCaseProvider)();
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
@@ -163,34 +124,21 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Opción: Credit Card
+                  // Único método de pago: tarjeta de prueba
                   _PaymentOptionCard(
                     label: 'Credit Card',
-                    isSelected: _selectedMethod == 'credit_card',
-                    onTap: () =>
-                        setState(() => _selectedMethod = 'credit_card'),
-                    child: _selectedMethod == 'credit_card'
-                        ? _CreditCardSection(
-                            cards: testCards,
-                            selectedCard: _selectedCard,
-                            sameAddress: _sameAddress,
-                            onCardSelected: (card) =>
-                                setState(() => _selectedCard = card),
-                            onSameAddressChanged: (value) =>
-                                setState(() => _sameAddress = value),
-                            onAddCard: () => showAddCardBottomSheet(context),
-                          )
-                        : null,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Opción: Apple Pay
-                  _PaymentOptionCard(
-                    label: 'Apple Pay',
-                    isSelected: _selectedMethod == 'apple_pay',
-                    onTap: () => setState(() => _selectedMethod = 'apple_pay'),
-                    child: null,
+                    isSelected: true,
+                    onTap: () {},
+                    child: _CreditCardSection(
+                      cards: testCards,
+                      selectedCard: _selectedCard,
+                      sameAddress: _sameAddress,
+                      onCardSelected: (card) =>
+                          setState(() => _selectedCard = card),
+                      onSameAddressChanged: (value) =>
+                          setState(() => _sameAddress = value),
+                      onAddCard: () => showAddCardBottomSheet(context),
+                    ),
                   ),
 
                   const SizedBox(height: 24),

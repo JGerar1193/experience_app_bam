@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/notifications/notification_service.dart';
 import '../../data/datasources/auth_firebase_datasource.dart';
-import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -10,6 +9,7 @@ import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
+import '../../domain/usecases/send_password_reset_usecase.dart';
 import 'package:experience_app/features/ecommerce/presentation/providers/cart_provider.dart';
 
 // ── Providers de infraestructura ──────────────────────────────────────────────
@@ -18,14 +18,9 @@ final authFirebaseDatasourceProvider = Provider<AuthFirebaseDatasource>((ref) {
   return AuthFirebaseDatasource();
 });
 
-final authLocalDatasourceProvider = Provider<AuthLocalDatasource>((ref) {
-  return AuthLocalDatasource(ref.read(sharedPreferencesProvider));
-});
-
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     firebase: ref.read(authFirebaseDatasourceProvider),
-    local: ref.read(authLocalDatasourceProvider),
   );
 });
 
@@ -45,6 +40,11 @@ final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
 
 final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUseCase>((ref) {
   return GetCurrentUserUseCase(ref.read(authRepositoryProvider));
+});
+
+final sendPasswordResetUseCaseProvider =
+    Provider<SendPasswordResetUseCase>((ref) {
+  return SendPasswordResetUseCase(ref.read(authRepositoryProvider));
 });
 
 // ── Estado de autenticación ───────────────────────────────────────────────────
@@ -95,16 +95,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final RegisterUseCase _register;
   final LogoutUseCase _logout;
   final GetCurrentUserUseCase _getCurrentUser;
+  final SendPasswordResetUseCase _sendPasswordReset;
 
   AuthNotifier({
     required LoginUseCase login,
     required RegisterUseCase register,
     required LogoutUseCase logout,
     required GetCurrentUserUseCase getCurrentUser,
+    required SendPasswordResetUseCase sendPasswordReset,
   })  : _login = login,
         _register = register,
         _logout = logout,
         _getCurrentUser = getCurrentUser,
+        _sendPasswordReset = sendPasswordReset,
         super(const AuthState.initial()) {
     _checkSession();
   }
@@ -146,6 +149,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  /// Devuelve null si el correo fue enviado, o el mensaje de error.
+  Future<String?> sendPasswordReset(String email) async {
+    try {
+      await _sendPasswordReset(email: email);
+      return null;
+    } catch (e) {
+      return e.toString().replaceFirst('Exception: ', '');
+    }
+  }
+
   Future<void> logout() async {
     await NotificationService.deleteToken();
     await _logout();
@@ -167,5 +180,6 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
     register: ref.read(registerUseCaseProvider),
     logout: ref.read(logoutUseCaseProvider),
     getCurrentUser: ref.read(getCurrentUserUseCaseProvider),
+    sendPasswordReset: ref.read(sendPasswordResetUseCaseProvider),
   );
 });

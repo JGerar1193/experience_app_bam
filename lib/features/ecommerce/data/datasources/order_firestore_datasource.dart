@@ -8,19 +8,6 @@ class OrderFirestoreDatasource {
 
   OrderFirestoreDatasource(this._firestore);
 
-  /// Genera una referencia de documento con ID único (sin guardar aún).
-  DocumentReference<Map<String, dynamic>> newDocRef() {
-    return _firestore.collection(_collection).doc();
-  }
-
-  /// Guarda la orden usando la referencia pre-generada (para conocer el ID antes de guardar).
-  Future<void> saveOrder(
-    OrderModel order,
-    DocumentReference<Map<String, dynamic>> docRef,
-  ) async {
-    await docRef.set(order.toFirestore());
-  }
-
   /// Obtiene una sola orden por su ID de documento.
   Future<OrderModel?> fetchOrderById(String orderId) async {
     final doc = await _firestore.collection(_collection).doc(orderId).get();

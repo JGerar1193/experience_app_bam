@@ -2,13 +2,12 @@ import '../entities/cart_item.dart';
 import '../entities/order.dart';
 
 abstract class OrderRepository {
-  /// Crea y persiste una nueva orden en Firestore, retorna la orden creada
+  /// Crea la orden y cobra el pago en el servidor; retorna la orden creada.
   Future<Order> placeOrder({
     required List<CartItem> items,
-    required double total,
-    required String paymentMethod,
-    String? selectedCard,
+    required String cardNumber,
   });
+
 
   /// Stream en tiempo real de las órdenes del usuario autenticado
   Stream<List<Order>> watchUserOrders(String uid);

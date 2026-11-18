@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bank:transfer:v1",
+  "$defs": {
+    "Id": {"type":"string","format":"uuid"},
+    "Currency": {"enum":["USD","EUR","COP","GTQ"]},
+    "Amount": {"type":"string","pattern":"^(0|[1-9][0-9]{0,17})\\.[0-9]{2}$"},
+    "Rate": {"type":"string","pattern":"^(0|[1-9][0-9]{0,17})(\\.[0-9]{1,24})?$"},
+    "Time": {"type":"string","format":"date-time"},
+    "Money": {"type":"object","additionalProperties":false,"required":["currency","amount"],"properties":{"currency":{"$ref":"#/$defs/Currency"},"amount":{"$ref":"#/$defs/Amount"}}},
+    "Operation": {"enum":["recipient-lookup","recipient-create","quote-create","transfer-reserve","transfer-confirm","transfer-cancel"]},
+    "State": {"enum":["CREADA","RESERVADA","CONTABILIZADA","RECHAZADA","CANCELADA","EXPIRADA"]},
+    "LookupRequest": {"type":"object","additionalProperties":false,"required":["accountNumber"],"properties":{"accountNumber":{"type":"string","minLength":1,"maxLength":64,"pattern":"^[0-9]+$"}}},
+    "LookupResponse": {"type":"object","additionalProperties":false,"required":["lookupId","fullName","currency","accountMasked","expiresAt"],"properties":{"lookupId":{"$ref":"#/$defs/Id"},"fullName":{"type":"string","minLength":1,"maxLength":256},"currency":{"$ref":"#/$defs/Currency"},"accountMasked":{"type":"string","minLength":1,"maxLength":64},"expiresAt":{"$ref":"#/$defs/Time"}}},
+    "RecipientRequest": {"type":"object","additionalProperties":false,"required":["lookupId","alias"],"properties":{"lookupId":{"$ref":"#/$defs/Id"},"alias":{"type":"string","minLength":1,"maxLength":80}}},
+    "RecipientResponse": {"type":"object","additionalProperties":false,"required":["recipientId","alias","fullName","currency","accountMasked"],"properties":{"recipientId":{"$ref":"#/$defs/Id"},"alias":{"type":"string","minLength":1,"maxLength":80},"fullName":{"type":"string","minLength":1,"maxLength":256},"currency":{"$ref":"#/$defs/Currency"},"accountMasked":{"type":"string","minLength":1,"maxLength":64}}},
+    "RecipientList": {"type":"object","additionalProperties":false,"required":["items","nextCursor"],"properties":{"items":{"type":"array","maxItems":100,"items":{"$ref":"#/$defs/RecipientResponse"}},"nextCursor":{"type":["string","null"],"maxLength":512}}},
+    "QuoteRequest": {"type":"object","additionalProperties":false,"required":["sourceWalletId","recipientId","sourceAmount"],"properties":{"sourceWalletId":{"$ref":"#/$defs/Id"},"recipientId":{"$ref":"#/$defs/Id"},"sourceAmount":{"$ref":"#/$defs/Amount"}}},
+    "QuoteResponse": {
+      "type":"object","additionalProperties":false,
+      "required":["quoteId","sourceWalletId","sourceAccountMasked","recipient","debit","rate","gross","conversionFeePercent","conversionFee","net","limitUsd","withinLimit","issuedAt","expiresAt","rateSnapshotId","policyVersion","irreversibleAfterConfirmation"],
+      "properties":{
+        "quoteId":{"$ref":"#/$defs/Id"},"sourceWalletId":{"$ref":"#/$defs/Id"},"sourceAccountMasked":{"type":"string","minLength":1,"maxLength":64},"recipient":{"$ref":"#/$defs/RecipientResponse"},
+        "debit":{"$ref":"#/$defs/Money"},"rate":{"$ref":"#/$defs/Rate"},"gross":{"$ref":"#/$defs/Money"},"conversionFeePercent":{"enum":["0","1"]},"conversionFee":{"$ref":"#/$defs/Money"},"net":{"$ref":"#/$defs/Money"},
+        "limitUsd":{"const":"200.00"},"withinLimit":{"const":true},"issuedAt":{"$ref":"#/$defs/Time"},"expiresAt":{"$ref":"#/$defs/Time"},"rateSnapshotId":{"anyOf":[{"$ref":"#/$defs/Id"},{"type":"null"}]},"policyVersion":{"type":"string","minLength":1,"maxLength":64},"irreversibleAfterConfirmation":{"const":true}
+      }
+    },
+    "ReserveRequest": {"type":"object","additionalProperties":false,"required":["quoteId"],"properties":{"quoteId":{"$ref":"#/$defs/Id"}}},
+    "ConfirmRequest": {"type":"object","additionalProperties":false,"required":["quoteId","acceptIrreversible"],"properties":{"quoteId":{"$ref":"#/$defs/Id"},"acceptIrreversible":{"const":true}}},
+    "CancelRequest": {"type":"object","additionalProperties":false,"properties":{"reason":{"const":"USER_ABANDONED"}}},
+    "TransferResponse": {"type":"object","additionalProperties":false,"required":["transferId","transactionNumber","state","quote","createdAt","postedAt","journalId","reasonCode"],"properties":{"transferId":{"$ref":"#/$defs/Id"},"transactionNumber":{"type":"string","minLength":1,"maxLength":64},"state":{"$ref":"#/$defs/State"},"quote":{"$ref":"#/$defs/QuoteResponse"},"createdAt":{"$ref":"#/$defs/Time"},"postedAt":{"anyOf":[{"$ref":"#/$defs/Time"},{"type":"null"}]},"journalId":{"anyOf":[{"$ref":"#/$defs/Id"},{"type":"null"}]},"reasonCode":{"type":["string","null"],"maxLength":64}}},
+    "ReceiptResponse": {"type":"object","additionalProperties":false,"required":["transactionNumber","transferId","state","postedAt","journalId","quote"],"properties":{"transactionNumber":{"type":"string","minLength":1,"maxLength":64},"transferId":{"$ref":"#/$defs/Id"},"state":{"const":"CONTABILIZADA"},"postedAt":{"$ref":"#/$defs/Time"},"journalId":{"$ref":"#/$defs/Id"},"quote":{"$ref":"#/$defs/QuoteResponse"}}},
+    "ErrorResponse": {"type":"object","additionalProperties":false,"required":["code","message","correlationId","retryable"],"properties":{"code":{"type":"string","minLength":1,"maxLength":64},"message":{"type":"string","minLength":1,"maxLength":256},"correlationId":{"$ref":"#/$defs/Id"},"retryable":{"type":"boolean"}}},
+    "OperationResponse": {"type":"object","additionalProperties":false,"required":["operation","key","httpStatus","result"],"properties":{"operation":{"$ref":"#/$defs/Operation"},"key":{"$ref":"#/$defs/Id"},"httpStatus":{"type":"integer","minimum":200,"maximum":599},"result":{"oneOf":[{"$ref":"#/$defs/LookupResponse"},{"$ref":"#/$defs/RecipientResponse"},{"$ref":"#/$defs/QuoteResponse"},{"$ref":"#/$defs/TransferResponse"},{"$ref":"#/$defs/ErrorResponse"}]}}}
+  }
+}

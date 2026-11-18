@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "wallet-transfers-demo": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/Entregables/specs-mcp/backend/dist/mcp/main.js", "--demo"]
+    }
+  }
+}

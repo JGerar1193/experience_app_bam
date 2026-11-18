@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:experience_app/features/auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/product.dart';
 import '../providers/product_management_provider.dart';
 import '../widgets/product_image.dart';
@@ -11,6 +12,16 @@ class ProductManagementScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isAdmin = ref.watch(authProvider).user?.isAdmin == true;
+    if (!isAdmin) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Gestión de Productos')),
+        body: const Center(
+          child: Text('No tienes permisos para gestionar productos'),
+        ),
+      );
+    }
+
     final productsAsync = ref.watch(allProductsProvider);
 
     return Scaffold(

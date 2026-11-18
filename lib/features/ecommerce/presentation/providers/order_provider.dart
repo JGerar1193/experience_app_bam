@@ -1,7 +1,9 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../features/auth/presentation/providers/auth_provider.dart';
+import '../../data/datasources/order_callable_datasource.dart';
 import '../../data/datasources/order_firestore_datasource.dart';
 import '../../data/repositories/order_repository_impl.dart';
 import '../../domain/entities/cart_item.dart';
@@ -16,9 +18,19 @@ final orderFirestoreDatasourceProvider = Provider<OrderFirestoreDatasource>((
   return OrderFirestoreDatasource(ref.read(firestoreProvider));
 });
 
-final orderRepositoryProvider = Provider<OrderRepository>((ref) {
-  return OrderRepositoryImpl(ref.read(orderFirestoreDatasourceProvider));
+final orderCallableDatasourceProvider = Provider<OrderCallableDatasource>((
+  ref,
+) {
+  return OrderCallableDatasource(FirebaseFunctions.instance);
 });
+
+final orderRepositoryProvider = Provider<OrderRepository>((ref) {
+  return OrderRepositoryImpl(
+    ref.read(orderCallableDatasourceProvider),
+    ref.read(orderFirestoreDatasourceProvider),
+  );
+});
+
 
 final orderByIdProvider = FutureProvider.autoDispose.family<Order?, String>((
   ref,
@@ -56,15 +68,11 @@ class OrderNotifier extends AutoDisposeStreamNotifier<List<Order>> {
 
   Future<Order> placeOrder({
     required List<CartItem> items,
-    required double total,
-    required String paymentMethod,
-    String? selectedCard,
+    required String cardNumber,
   }) async {
     return ref.read(placeOrderUseCaseProvider)(
       items: items,
-      total: total,
-      paymentMethod: paymentMethod,
-      selectedCard: selectedCard,
+      cardNumber: cardNumber,
     );
   }
 }
