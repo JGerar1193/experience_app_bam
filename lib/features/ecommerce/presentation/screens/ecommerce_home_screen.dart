@@ -8,6 +8,7 @@ import '../providers/ecommerce_provider.dart';
 import '../widgets/product_section.dart';
 import 'bag_screen.dart';
 import 'product_management_screen.dart';
+import 'support_chat_screen.dart';
 import 'transactions_screen.dart';
 
 class EcommerceHomeScreen extends ConsumerWidget {
@@ -277,6 +278,16 @@ class _ProfileSection extends ConsumerWidget {
               ),
               const Divider(height: 1),
             ],
+
+            _ProfileOption(
+              icon: Icons.support_agent,
+              label: 'Asistente de pedidos',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SupportChatScreen()),
+              ),
+            ),
+            const Divider(height: 1),
 
             _ProfileOption(
               icon: Icons.logout,
