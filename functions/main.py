@@ -6,14 +6,17 @@ import urllib.error
 import urllib.request
 
 from firebase_admin import firestore, initialize_app, messaging
-from firebase_functions import firestore_fn, https_fn
+from firebase_functions import firestore_fn, https_fn, scheduler_fn
 from firebase_functions.options import set_global_options
+
+from ai_agents import answer_support_question, run_reconciliation
 
 set_global_options(max_instances=10)
 initialize_app()
 
 PAYMENT_API_URL = "https://processpayment-sfdkfoab2q-uc.a.run.app"
 MAX_QUANTITY = 99
+MAX_SUPPORT_MESSAGE_LENGTH = 500
 
 
 def _to_int(raw) -> int | None:
@@ -187,6 +190,32 @@ def on_order_created(event: firestore_fn.Event[firestore_fn.DocumentSnapshot]) -
         for idx, resp in enumerate(response.responses):
             if not resp.success:
                 print(f"Token fallido #{idx}: {resp.exception}")
+
+
+@https_fn.on_call()
+def support_agent(req: https_fn.CallableRequest) -> dict:
+    if req.auth is None:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.UNAUTHENTICATED, "Debes iniciar sesión.")
+
+    message = str((req.data or {}).get("message") or "").strip()[:MAX_SUPPORT_MESSAGE_LENGTH]
+    if not message:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT, "Escribe tu pregunta.")
+
+    try:
+        answer = answer_support_question(firestore.client(), req.auth.uid, message)
+    except Exception as error:
+        print(f"Error en el agente de soporte: {error}")
+        raise https_fn.HttpsError(
+            https_fn.FunctionsErrorCode.UNAVAILABLE,
+            "El asistente no está disponible en este momento.",
+        )
+
+    return {"answer": answer}
+
+
+@scheduler_fn.on_schedule(schedule="every 24 hours")
+def reconciliation_agent(event: scheduler_fn.ScheduledEvent) -> None:
+    print(run_reconciliation(firestore.client()))
 
 
 @firestore_fn.on_document_created(document="users/{userId}")
