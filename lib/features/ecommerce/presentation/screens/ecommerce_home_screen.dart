@@ -143,7 +143,7 @@ class EcommerceHomeScreen extends ConsumerWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_rounded),
+            icon: Icon(Icons.support_agent),
             label: 'Categories',
           ),
           BottomNavigationBarItem(
