@@ -24,7 +24,9 @@ class EcommerceHomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      body: bottomIndex == 2
+      body: bottomIndex == 1
+          ? const SupportChatScreen()
+          : bottomIndex == 2
           ? const TransactionsScreen()
           : bottomIndex == 3
           ? const _ProfileSection()
@@ -278,16 +280,6 @@ class _ProfileSection extends ConsumerWidget {
               ),
               const Divider(height: 1),
             ],
-
-            _ProfileOption(
-              icon: Icons.support_agent,
-              label: 'Asistente de pedidos',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SupportChatScreen()),
-              ),
-            ),
-            const Divider(height: 1),
 
             _ProfileOption(
               icon: Icons.logout,
