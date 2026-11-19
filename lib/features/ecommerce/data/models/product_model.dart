@@ -30,8 +30,9 @@ class ProductModel {
     return ProductModel(
       id: json['id'] as String,
       name: json['name'] as String,
-      category: json['category'] as String,
-      price: (json['price'] as num).toDouble(),
+      // Los pedidos guardados pueden traer 'Category' y 'Price' (ver fromFirestore)
+      category: (json['category'] ?? json['Category']) as String,
+      price: ((json['price'] ?? json['Price']) as num).toDouble(),
       imagePath: json['imagePath'] as String,
       description: json['description'] as String,
       sizes: List<String>.from(json['sizes'] as List),
