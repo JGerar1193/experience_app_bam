@@ -144,7 +144,7 @@ class EcommerceHomeScreen extends ConsumerWidget {
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
           BottomNavigationBarItem(
             icon: Icon(Icons.support_agent),
-            label: 'Categories',
+            label: 'Asistente',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
